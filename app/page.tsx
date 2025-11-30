@@ -1,7 +1,19 @@
 "use client"
 
+import 'leaflet/dist/leaflet.css';
+import dynamic from 'next/dynamic';
 import { Button } from "../components/ui/button";
 import { useState, Suspense } from "react";
+
+// Dynamically import RiderMap with SSR disabled to avoid "window is not defined" error
+const RiderMap = dynamic(() => import("@/components/RiderMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-screen">
+      <div className="animate-pulse text-gray-600">Loading map...</div>
+    </div>
+  ),
+});
 
 function HomeContent() {
   const [userType, setUserType] = useState<"driver" | "rider" | null>(null)
@@ -35,6 +47,8 @@ function HomeContent() {
           </div>
         </div>
       )}
+
+      {userType === "rider" && <RiderMap />}
     </main>
   );
 }
