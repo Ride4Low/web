@@ -3,8 +3,8 @@ import { Coordinate, Driver, Route, RouteFare, Trip } from "./type";
 
 // These are the endpoints the API Gateway must have for the frontend to work correctly
 export enum BackendEndpoints {
-  PREVIEW_TRIP = "/trip/preview",
-  START_TRIP = "/trip/start",
+  PREVIEW_TRIP = "/api/trip/preview",
+  START_TRIP = "/api/trip/start",
   WS_DRIVERS = "/drivers",
   WS_RIDERS = "/riders",
 }
@@ -98,7 +98,7 @@ export interface HTTPTripStartRequestPayload {
 export interface HTTPTripPreviewRequestPayload {
   userID: string;
   pickup: Coordinate;
-  destination: Coordinate;
+  dropoff: Coordinate;
 }
 
 export function isValidTripEvent(event: string): event is TripEvents {

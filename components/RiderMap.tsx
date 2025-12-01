@@ -68,7 +68,7 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
 
             const data = await requestRidePreview({
                 pickup: [location.latitude, location.longitude],
-                destination: [e.latlng.lat, e.latlng.lng],
+                dropoff: [e.latlng.lat, e.latlng.lng],
             })
             console.log(data)
 
@@ -89,16 +89,16 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
     }
 
     const requestRidePreview = async (props: RequestRideProps): Promise<HTTPTripPreviewResponse> => {
-        const { pickup, destination } = props
+        const { pickup, dropoff } = props
         const payload = {
             userID: userID,
             pickup: {
                 latitude: pickup[0],
                 longitude: pickup[1],
             },
-            destination: {
-                latitude: destination[0],
-                longitude: destination[1],
+            dropoff: {
+                latitude: dropoff[0],
+                longitude: dropoff[1],
             },
         } as HTTPTripPreviewRequestPayload
 

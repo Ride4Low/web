@@ -10,7 +10,7 @@ export interface Trip {
 
 export interface RequestRideProps {
     pickup: [number, number],
-    destination: [number, number],
+    dropoff: [number, number],
 }
 
 export interface Coordinate {
