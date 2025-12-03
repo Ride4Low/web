@@ -1,9 +1,13 @@
 "use client"
 
 import 'leaflet/dist/leaflet.css';
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 import dynamic from 'next/dynamic';
 import { Button } from "../components/ui/button";
 import { useState, Suspense } from "react";
+import { CarPackageSlug } from '@/type';
+import { DriverPackageSelector } from '@/components/DriverPackageSelector';
 
 // Dynamically import RiderMap with SSR disabled to avoid "window is not defined" error
 const RiderMap = dynamic(() => import("@/components/RiderMap"), {
@@ -15,8 +19,35 @@ const RiderMap = dynamic(() => import("@/components/RiderMap"), {
   ),
 });
 
+// Dynamically import components that use Leaflet
+// const DriverMap = dynamic(() => import("@/components/DriverMap").then(mod => mod.DriverMap), {
+const DriverMap = dynamic(() => import("@/components/DriverMap").then(mod => mod.DriverMap), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-screen">
+      <div className="animate-pulse text-gray-600">Loading map...</div>
+    </div>
+  ),
+});
+
+// Initialize Leaflet icon only on client side
+if (typeof window !== 'undefined') {
+  import('leaflet').then((L) => {
+    const DefaultIcon = L.default.icon({
+      iconUrl: icon.src,
+      shadowUrl: iconShadow.src,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    })
+    L.default.Marker.prototype.options.icon = DefaultIcon
+  })
+}
+
 function HomeContent() {
   const [userType, setUserType] = useState<"driver" | "rider" | null>(null)
+
+  const [packageSlug, setPackageSlug] = useState<CarPackageSlug | null>(null)
+
 
   const handleClick = (userType: "driver" | "rider") => {
     setUserType(userType)
@@ -46,6 +77,14 @@ function HomeContent() {
             </div>
           </div>
         </div>
+      )}
+
+      {userType === "driver" && packageSlug && (
+        <DriverMap packageSlug={packageSlug} />
+      )}
+
+      {userType === "driver" && !packageSlug && (
+        <DriverPackageSelector onSelect={setPackageSlug} />
       )}
 
       {userType === "rider" && <RiderMap />}
