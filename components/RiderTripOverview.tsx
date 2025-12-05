@@ -76,7 +76,7 @@ export const RiderTripOverview = ({
         <div className="flex flex-col space-y-3 justify-center items-center mb-4">
           {/* <p>Driver: {trip.id}</p> */}
         </div>
-        <Button variant="destructive" className="w-full" onClick={onCancel}>
+        <Button variant="outline" className="w-full" onClick={onCancel}>
           Cancel current trip
         </Button>
       </TripOverviewCard>
