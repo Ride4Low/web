@@ -27,7 +27,7 @@ export const DriverTripOverview = ({ trip, status, onAcceptTrip, onDeclineTrip }
         description="A trip has been requested, check the route and accept the trip if you can take it."
       >
         <div className="flex flex-col gap-2">
-          <Button onClick={onAcceptTrip}>Accept trip</Button>
+          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" onClick={onAcceptTrip}>Accept trip</Button>
           <Button variant="outline" onClick={onDeclineTrip}>Decline trip</Button>
         </div>
       </TripOverviewCard>
