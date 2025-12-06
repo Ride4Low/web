@@ -45,9 +45,9 @@ export const StripePaymentButton = ({
     <Button
       onClick={handlePayment}
       disabled={isLoading}
-      className="w-full"
+      className="w-full bg-black text-white hover:bg-gray-800 shadow-md hover:shadow-lg transition-all"
     >
-      {isLoading ? "Loading..." : `Pay ${paymentSession.amount} ${paymentSession.currency}`}
+      {isLoading ? "Processing..." : `💳 Pay ${paymentSession.amount} ${paymentSession.currency}`}
     </Button>
   )
 } 
