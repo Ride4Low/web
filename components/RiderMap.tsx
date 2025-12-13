@@ -47,9 +47,11 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
         drivers,
         error,
         tripStatus,
+        tripID,
         assignedDriver,
         paymentSession,
-        resetTripStatus
+        resetTripStatus,
+        selectPaymentMethod
     } = useRiderStreamConnection(location, userID);
 
     console.log(tripStatus)
@@ -226,11 +228,13 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
             <div className="flex-[0.4]">
                 <RiderTripOverview
                     trip={trip}
+                    tripID={tripID}
                     assignedDriver={assignedDriver}
                     status={tripStatus}
                     paymentSession={paymentSession}
                     onPackageSelect={handleStartTrip}
                     onCancel={handleCancelTrip}
+                    onSelectPaymentMethod={selectPaymentMethod}
                 />
             </div>
         </div>

@@ -12,19 +12,23 @@ import { TripEvents, PaymentEventSessionCreatedData } from "../contracts"
 interface TripOverviewProps {
   trip: TripPreview | null;
   status: TripEvents | null;
+  tripID?: string | null;
   assignedDriver?: Driver | null;
   paymentSession?: PaymentEventSessionCreatedData | null;
   onPackageSelect: (carPackage: RouteFare) => void;
   onCancel: () => void;
+  onSelectPaymentMethod: (method: 'card' | 'crypto', tripID: string) => void;
 }
 
 export const RiderTripOverview = ({
   trip,
   status,
+  tripID,
   assignedDriver,
   paymentSession,
   onPackageSelect,
   onCancel,
+  onSelectPaymentMethod,
 }: TripOverviewProps) => {
   if (!trip) {
     return (
@@ -85,8 +89,10 @@ export const RiderTripOverview = ({
             <button
               className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 group"
               onClick={() => {
-                // TODO: Handle card payment selection
-                console.log('Card payment selected');
+                console.log("Selecting card payment method", tripID);
+                if (tripID) {
+                  onSelectPaymentMethod('card', tripID);
+                }
               }}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">

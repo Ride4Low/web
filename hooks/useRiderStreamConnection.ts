@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { WEBSOCKET_URL } from "../constants";
 import { Trip } from '../type';
 import { Driver, Coordinate } from '../type';
@@ -9,12 +9,15 @@ export function useRiderStreamConnection(location: Coordinate, userID: string) {
     const [tripStatus, setTripStatus] = useState<TripEvents | null>(null);
     const [paymentSession, setPaymentSession] = useState<PaymentEventSessionCreatedData | null>(null);
     const [assignedDriver, setAssignedDriver] = useState<Trip["driver"] | null>(null);
+    const [tripID, setTripID] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
         if (!userID) return;
 
         const ws = new WebSocket(`${WEBSOCKET_URL}${BackendEndpoints.WS_RIDERS}?userID=${userID}`);
+        wsRef.current = ws;
 
         ws.onopen = () => {
             // Send initial location
@@ -47,6 +50,7 @@ export function useRiderStreamConnection(location: Coordinate, userID: string) {
                 case TripEvents.DriverAssigned:
                     setAssignedDriver(message.data.driver);
                     setTripStatus(message.type);
+                    setTripID(message.data.id);
                     break;
                 case TripEvents.Created:
                     setTripStatus(message.type);
@@ -78,7 +82,25 @@ export function useRiderStreamConnection(location: Coordinate, userID: string) {
     const resetTripStatus = () => {
         setTripStatus(null);
         setPaymentSession(null);
+        setTripID(null);
     }
 
-    return { drivers, assignedDriver, error, tripStatus, paymentSession, resetTripStatus };
+    const selectPaymentMethod = useCallback((method: 'card' | 'crypto', tripID: string) => {
+        console.log("Selecting payment method", method, tripID);
+        if (wsRef.current?.readyState === WebSocket.OPEN) {
+            const eventType = method === 'card'
+                ? TripEvents.PaymentSelectCard
+                : TripEvents.PaymentSelectCrypto;
+
+            wsRef.current.send(JSON.stringify({
+                type: eventType,
+                data: {
+                    tripID,
+                    userID,
+                }
+            }));
+        }
+    }, [userID]);
+
+    return { drivers, assignedDriver, error, tripStatus, tripID, paymentSession, resetTripStatus, selectPaymentMethod };
 }

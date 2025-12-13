@@ -21,6 +21,8 @@ export enum TripEvents {
   DriverTripDecline = "driver.cmd.trip_decline",
   DriverRegister = "driver.cmd.register",
   PaymentSessionCreated = "payment.event.session_created",
+  PaymentSelectCard = "payment.cmd.select_card",
+  PaymentSelectCrypto = "payment.cmd.select_crypto",
 }
 
 // Messages sent from the server to the client via the websocket
