@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { useWallet } from "../hooks/useWallet";
 import { useX402 } from "../hooks/useX402";
 import { formatUnits } from "ethers";
-import { API_URL } from "@/constants";
+import { API_URL, FRONTEND_URL } from "@/constants";
 import { BackendEndpoints } from "@/contracts";
 
 interface CryptoPaymentViewProps {
@@ -48,6 +48,8 @@ export const CryptoPaymentView = ({
             await pay(`${API_URL}${BackendEndpoints.PAY_TRIP}`, quote);
             setPaymentSuccess(true);
             onPay(); // Notify parent of success
+            // Redirect to success page
+            window.location.href = `${FRONTEND_URL}?payment=success`;
         } catch (e) {
             console.error("Payment failed", e);
         }
