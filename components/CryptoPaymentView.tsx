@@ -9,6 +9,7 @@ import { BackendEndpoints } from "@/contracts";
 interface CryptoPaymentViewProps {
     amount: number | string;
     currency: string;
+    tripID?: string;
     onPay: () => void;
     onCancel: () => void;
     isLoading?: boolean;
@@ -17,6 +18,7 @@ interface CryptoPaymentViewProps {
 export const CryptoPaymentView = ({
     amount: initialAmount,
     currency,
+    tripID,
     onPay,
     onCancel,
     isLoading: parentLoading = false,
@@ -32,7 +34,12 @@ export const CryptoPaymentView = ({
         if (isConnected) {
             const getQuote = async () => {
                 setFetchingQuote(true);
-                const q = await fetchQuote(`${API_URL}${BackendEndpoints.PAY_TRIP}`);
+                const q = await fetchQuote(`${API_URL}${BackendEndpoints.PAY_TRIP}`, {
+                    headers: {
+                        'Price': initialAmount.toString(),
+                        'TripID': tripID || ''
+                    }
+                });
                 if (q) {
                     setQuote(q);
                 }
@@ -40,12 +47,17 @@ export const CryptoPaymentView = ({
             };
             getQuote();
         }
-    }, [isConnected, fetchQuote]);
+    }, [isConnected, fetchQuote, initialAmount, tripID]);
 
     const handlePay = async () => {
         if (!quote) return;
         try {
-            await pay(`${API_URL}${BackendEndpoints.PAY_TRIP}`, quote);
+            await pay(`${API_URL}${BackendEndpoints.PAY_TRIP}`, quote, {
+                headers: {
+                    'Price': initialAmount.toString(),
+                    'TripID': tripID || ''
+                }
+            });
             setPaymentSuccess(true);
             onPay(); // Notify parent of success
             // Redirect to success page

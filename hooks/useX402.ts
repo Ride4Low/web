@@ -24,11 +24,19 @@ export function useX402() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchQuote = useCallback(async (url: string): Promise<PaymentRequest | null> => {
+    const fetchQuote = useCallback(async (url: string, init?: RequestInit): Promise<PaymentRequest | null> => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(url, { method: 'POST' });
+            console.log(init, "init");
+
+            const res = await fetch(url, {
+                method: 'POST',
+                ...init,
+                headers: {
+                    ...init?.headers
+                }
+            });
 
             if (res.status !== 402) {
                 if (res.ok) {
@@ -53,7 +61,7 @@ export function useX402() {
         }
     }, []);
 
-    const pay = useCallback(async (url: string, paymentRequest: PaymentRequest) => {
+    const pay = useCallback(async (url: string, paymentRequest: PaymentRequest, init?: RequestInit) => {
         if (!address || !window.ethereum) {
             setError('Wallet not connected');
             throw new Error('Wallet not connected');
@@ -160,7 +168,11 @@ export function useX402() {
 
             const res = await fetch(url, {
                 method: 'POST',
-                headers: { 'PAYMENT-SIGNATURE': paymentPayload }
+                ...init,
+                headers: {
+                    ...init?.headers,
+                    'PAYMENT-SIGNATURE': paymentPayload
+                }
             });
 
             if (!res.ok) {

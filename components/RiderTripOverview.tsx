@@ -167,6 +167,7 @@ export const RiderTripOverview = ({
               <CryptoPaymentView
                 amount={((trip?.rideFares?.[0]?.totalPriceInCents || 0) / 100).toFixed(2)}
                 currency="USDC"
+                tripID={tripID || undefined}
                 onPay={() => {
                   if (tripID) {
                     onSelectPaymentMethod('crypto', tripID);
